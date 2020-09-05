@@ -6,5 +6,12 @@ export const MainContainer = styled.div`
   justify-content: center;
   align-items: center;
 `
-export const ButtonContainer = styled(MainContainer)``
+export const ButtonContainer = styled.div`
+  display: inline-flex;
+  margin-top: 25px;
+`
 export const InputContainer = styled(MainContainer)``
+
+export const HeaderContainer = styled.div`
+  display: flex;
+`

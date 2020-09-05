@@ -1,6 +1,6 @@
 import React, { createContext, useCallback } from 'react'
 import { useThunkReducer } from './hooks'
-import { requestApi } from './requestApi'
+import { requestApi } from './redux/requestApi'
 
 export const KhContext = createContext()
 
@@ -70,17 +70,33 @@ export const SchedulerProvider = ({ children }) => {
       dispatch({ type: ERROR, payload: { error: err } })
     }
   }
+  const login = async () => {
+    try {
+      const res = await requestApi('/login')
+      console.log(res)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const getSpeakers = async () => {
+    try {
+      const res = await requestApi('/getSpeakers')
+      console.log(res)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
-  return (
-    <KhContext.Provider
-      value={{
-        state,
-        sendText,
-        sendEmail,
-        dispatch
-      }}
-    >
-      {children}
-    </KhContext.Provider>
-  )
+  const value = {
+    state,
+    actions: {
+      sendText,
+      sendEmail,
+      login,
+      getSpeakers,
+      dispatch
+    }
+  }
+
+  return <KhContext.Provider value={value}>{children}</KhContext.Provider>
 }

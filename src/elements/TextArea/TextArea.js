@@ -13,6 +13,8 @@ export function TextArea({
   disabled = false,
   placeholder = null,
   readOnly = false,
+  onChange = () => false,
+  onClick = () => false,
   autoFocus = false
 }) {
   if (label && !domID) {
@@ -30,6 +32,8 @@ export function TextArea({
         readOnly={readOnly}
         autoFocus={autoFocus}
         cols={cols}
+        onChange={onChange}
+        onClick={onclick}
         placeholder={placeholder}
         disabled={disabled}
       />

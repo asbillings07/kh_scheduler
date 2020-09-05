@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
-export const requestApi = (path, method = 'GET', body = null) => {
-  const url = `http://localhost:9000${path}`
+export const requestApi = (path, method = 'GET', body = null, query = null) => {
+  const url = `http://localhost:9000/api${path}`
 
   const options = {
     method,
@@ -21,9 +21,9 @@ export const requestApi = (path, method = 'GET', body = null) => {
   //   options.headers.Authorization = `Bearer ${token}`
   // }
 
-  // if (query !== null) {
-  //   options.params = query
-  // }
-
+  if (query !== null) {
+    options.params = query
+  }
+  console.log(options)
   return Axios(url, options)
 }

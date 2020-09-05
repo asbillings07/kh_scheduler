@@ -11,7 +11,8 @@ export function Input({
   type = 'text',
   domID = null,
   disabled = false,
-  name = null
+  name = null,
+  onChange = () => false
 }) {
   if (label && !domID) {
     console.warn('Please enter a valid "domID" prop into Input component')
@@ -21,7 +22,14 @@ export function Input({
     <div>
       {label ? <InputLabel htmlFor={domID}>{label}</InputLabel> : null}
 
-      <TextInput id={domID} name={name} type={type} placeholder={placeholder} disabled={disabled} />
+      <TextInput
+        id={domID}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        onChange={onChange}
+        disabled={disabled}
+      />
     </div>
   )
 }
