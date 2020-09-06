@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-
+import { below } from '../utils/'
 export const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,4 +14,8 @@ export const InputContainer = styled(MainContainer)``
 
 export const HeaderContainer = styled.div`
   display: flex;
+  ${below.medSmall`
+    flex-direction: column;
+    justify-content: center;
+  `}
 `

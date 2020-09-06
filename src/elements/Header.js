@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { white, fixed, elevation } from '../utils'
+import { white, fixed, elevation, above } from '../utils'
 
 export const Header = styled.header`
   display: flex;
