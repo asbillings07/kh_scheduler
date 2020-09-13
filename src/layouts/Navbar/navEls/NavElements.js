@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import {
   Navbar as StyledNav,
-  NavLinks as StyledLinks,
+  NavList,
+  NavLink,
   BurgerWrapper,
   MenuWrapper,
-  CollaspedLink
+  CollaspedLink,
+  MainWrapper,
+  CollaspedList
 } from '../../../elements/'
 import { CollapseWrapper } from '../../../elements/CollaspeMenu'
 import { useSpring, config } from 'react-spring'
@@ -58,17 +61,15 @@ const NavLinks = ({ children }) => {
   const { linkAnimation, isNavOpen } = useNavContext()
   return (
     <>
-      {isNavOpen ? (
-        <CollaspedLink>{children}</CollaspedLink>
-      ) : (
-        <StyledLinks style={linkAnimation}>{children}</StyledLinks>
-      )}
+      <NavList listOpen={isNavOpen} style={linkAnimation}>
+        {children}
+      </NavList>
     </>
   )
 }
 
 const Link = ({ children, ...props }) => {
-  return <li {...props}>{children}</li>
+  return <NavLink {...props}>{children}</NavLink>
 }
 
 const Menu = ({ children }) => {
@@ -90,7 +91,7 @@ const Menu = ({ children }) => {
           {children}
         </CollapseWrapper>
       ) : (
-        ''
+        <MainWrapper>{children}</MainWrapper>
       )}
       <BurgerWrapper>
         <MenuWrapper onClick={toggleOpen}>

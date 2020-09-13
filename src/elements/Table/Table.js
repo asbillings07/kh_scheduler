@@ -1,6 +1,13 @@
 import PropTypes from 'prop-types'
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-import { Styles, TableRow } from './TableStyles'
+import {
+  Styles,
+  TableRow,
+  StyledTable,
+  StyledTableHeader,
+  StyledTableHead,
+  StyledTableCell
+} from './TableStyles'
 import { CheckBox } from './Checkbox'
 import { Pagination } from './Pagination'
 import {
@@ -138,8 +145,8 @@ export function ReactTable({
   return (
     // apply the table props
     <Styles>
-      <div {...getTableProps()} className='table'>
-        <div>
+      <StyledTable {...getTableProps()}>
+        <StyledTableHead>
           {
             // Loop over the header rows
             headerGroups.map((headerGroup) => (
@@ -164,7 +171,7 @@ export function ReactTable({
 
                     return (
                       // * Apply the header cell props
-                      <div key={`th-${i}`} {...rest} className='th'>
+                      <StyledTableHeader key={`th-${i}`} {...rest}>
                         <div onClick={onClick}>{render('Header')}</div>
 
                         <div
@@ -174,15 +181,15 @@ export function ReactTable({
 
                         <div>{canFilter ? render('Filter') : null}</div>
                         <span>{isSorted ? (isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
-                      </div>
+                      </StyledTableHeader>
                     )
                   })
                 }
               </div>
             ))
           }
-        </div>
-
+        </StyledTableHead>
+        {/* BODY */}
         <div {...getTableBodyProps()}>
           {
             // Loop over the table rows
@@ -217,12 +224,12 @@ export function ReactTable({
                     row.cells.map((cell) => {
                       // Apply the cell props
                       return (
-                        <div {...cell.getCellProps()} className='td'>
+                        <StyledTableCell {...cell.getCellProps()}>
                           {
                             // Render the cell contents
                             cell.render('Cell')
                           }
-                        </div>
+                        </StyledTableCell>
                       )
                     })
                   }
@@ -231,7 +238,7 @@ export function ReactTable({
             })
           }
         </div>
-
+        {/* BODY */}
         {addPagination ? (
           <Pagination
             pageCount={pageCount}
@@ -248,7 +255,7 @@ export function ReactTable({
         ) : (
           ''
         )}
-      </div>
+      </StyledTable>
     </Styles>
   )
 }

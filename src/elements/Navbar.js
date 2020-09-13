@@ -25,48 +25,37 @@ export const NavContainer = styled.div`
   }
 `
 
-export const NavLinks = styled(animated.ul)`
-  display: flex;
+export const NavList = styled(animated.ul)`
   justify-self: end;
   list-style-type: none;
   margin: auto 0;
   span {
     color: white;
-    ${below.med`
-    display: none;
-    `}
+    margin-right: 5px;
   }
-  & a {
-    color: #dfe6e9;
-    text-transform: uppercase;
-    font-weight: 600;
-    border-bottom: 1px solid transparent;
-    margin: 0 1.5rem;
-    transition: all 300ms linear 0s;
-    text-decoration: none;
-    cursor: pointer;
-    &:hover {
-      color: #fdcb6e;
-      border-bottom: 1px solid #fdcb6e;
-    }
-    ${below.med`
-    display: none;
-    `}
-  }
-`
-export const CollaspedLink = styled(animated.ul)`
-  list-style-type: none;
-  padding: 2rem 1rem 2rem 2rem;
+
+  ${({ listOpen }) => {
+    if (listOpen) {
+      return `display: flex;
+  flex-direction: column;
+   padding: 2rem 1rem 2rem 2rem;
   span {
     color: white;
+    margin-right: 5px;
   }
   & li {
     transition: all 300ms linear 0s;
-  }
-  & a {
+  }`
+    }
+  }}
+`
+export const CollaspedList = styled(animated.ul)``
+export const NavLink = styled.a`
+  a {
     font-size: 1.4rem;
     line-height: 2;
     color: #dfe6e9;
+    margin-right: 10px;
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
@@ -75,8 +64,23 @@ export const CollaspedLink = styled(animated.ul)`
       border-bottom: 1px solid #fdcb6e;
     }
   }
+  ${({ collaspedLink }) => {
+    if (collaspedLink) {
+      return `a { font-weight: 600;
+  border-bottom: 1px solid transparent;
+  margin: 0 1.5rem;
+  transition: all 300ms linear 0s;
+  ${below.med`
+    display: none;
+    `}}`
+    }
+  }}
 `
-
+export const MainWrapper = styled.div`
+  ${below.med`
+    display: none;
+    `}
+`
 export const BurgerWrapper = styled.div`
   margin: auto 0;
 
