@@ -37,69 +37,79 @@ export const data = [
     lastName: 'Johnson',
     age: 9,
     gender: 'F',
-    grade: 4
+    grade: 4,
+    uid: 100
   },
   {
     firstName: 'Mike',
     lastName: 'Ford',
     age: 5,
     gender: 'M',
-    grade: 1
+    grade: 1,
+    uid: 200
   },
   {
     firstName: 'John',
     lastName: 'Smith',
     age: 8,
     gender: 'M',
-    grade: 4
+    grade: 4,
+    uid: 300
   },
   {
     firstName: 'Joe',
     lastName: 'Johnson',
     age: 11,
     gender: 'M',
-    grade: 6
+    grade: 6,
+    uid: 400
   },
   {
     firstName: 'Linda',
     lastName: 'Ford',
     age: 8,
     gender: 'F',
-    grade: 5
+    grade: 5,
+    uid: 500
   },
   {
     firstName: 'Noah',
     lastName: 'Wilson',
     age: 9,
     gender: 'M',
-    grade: 3
+    grade: 3,
+    uid: 600
   },
   {
     firstName: 'Emma',
     lastName: 'Lee',
     age: 7,
     gender: 'F',
-    grade: 3
+    grade: 3,
+    uid: 700
   },
   {
     firstName: 'James',
     lastName: 'Jones',
     age: 10,
     gender: 'M',
-    grade: 5
+    grade: 5,
+    uid: 800
   },
   {
     firstName: 'Mia',
     lastName: 'Brown',
     age: 8,
     gender: 'F',
-    grade: 5
+    grade: 5,
+    uid: 900
   },
   {
     firstName: 'William',
     lastName: 'Davis',
     age: 11,
     gender: 'M',
-    grade: 6
+    grade: 6,
+    uid: 1000
   }
 ]

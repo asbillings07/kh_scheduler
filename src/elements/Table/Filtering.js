@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 const isValidDate = function (date) {
   // An invalid date object returns NaN for getTime() and NaN is the only

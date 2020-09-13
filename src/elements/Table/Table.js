@@ -1,5 +1,8 @@
-import React, { useMemo } from 'react'
-import { Styles } from './TableStyles'
+import PropTypes from 'prop-types'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
+import { Styles, TableRow } from './TableStyles'
+import { CheckBox } from './Checkbox'
+import { Pagination } from './Pagination'
 import {
   useTable,
   useSortBy,
@@ -7,12 +10,26 @@ import {
   useGlobalFilter,
   usePagination,
   useFlexLayout,
-  useResizeColumns
+  useResizeColumns,
+  useRowSelect
 } from 'react-table'
-import { columns, data } from './ColumnsRows'
+
 import { filterTypes, ColumnFilter } from './Filtering'
 
-export const ReactTable = () => {
+export function ReactTable({
+  columns,
+  records,
+  addSelection = false,
+  height = 400,
+  sizeOfPage = 5,
+  indexOfPage = 0,
+  addPagination = false,
+  selectionKey = null,
+  initialFocusedItemId = null,
+  onClickThrough = () => false,
+  onRowSelect = () => false,
+  isRowLink = false
+}) {
   // const tableCols = useMemo(() => columns, [])
   // const tableData = useMemo(() => data, [])
   const defaultColumn = useMemo(
@@ -20,7 +37,7 @@ export const ReactTable = () => {
       // Let's set up our default Filter UI
       Filter: ColumnFilter,
       minWidth: 30,
-      width: 150,
+      width: 200,
       maxWidth: 400
     }),
     []
@@ -28,29 +45,58 @@ export const ReactTable = () => {
   const tableInstance = useTable(
     {
       columns,
-      data,
+      data: records,
       defaultColumn,
       filterTypes,
       initialState: {
-        pageSize: 3,
-        pageIndex: 1
+        pageSize: sizeOfPage,
+        pageIndex: indexOfPage
       }
     },
-    useFilters, // * useFilters hook to filter the table
+    useFilters,
     useGlobalFilter,
-    useSortBy, // * useSortBy hook to sort the table, must be placed after the useFilter hook
-    usePagination, // * usePagination hook to sort the table, must be placed after the useSortBy hook
+    useSortBy,
+    usePagination,
     useFlexLayout,
-    useResizeColumns
+    useResizeColumns,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        // Let's make a column for selection
+        {
+          id: 'selection',
+          // The header can use the table's getToggleAllRowsSelectedProps method
+          // to render a checkbox
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <div>
+              <CheckBox {...getToggleAllRowsSelectedProps()} />
+            </div>
+          ),
+          // The cell can use the individual row's getToggleRowSelectedProps method
+          // to the render a checkbox
+          Cell: ({ row }) => {
+            return (
+              <div>
+                <CheckBox
+                  onClick={(e) => console.log(e.target)}
+                  {...row.getToggleRowSelectedProps()}
+                />
+              </div>
+            )
+          }
+        },
+        ...columns
+      ])
+    }
   )
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    // rows,
-    page, // Instead of using 'rows', we'll use page,
-    // which has only the rows for the active page
+    rows,
+    page,
 
+    // which has only the rows for the active page
     // The rest of these things are super handy, too ;)
     canPreviousPage,
     canNextPage,
@@ -60,23 +106,45 @@ export const ReactTable = () => {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, selectedRowIds },
     prepareRow
     // * add this to enable footers
   } = tableInstance
+  const rowItems = addPagination ? page : rows
+  const [focusedItemId, setFocusedItemId] = useState(initialFocusedItemId)
+  const [focus, setFocus] = useState(false)
 
-  console.log({ defaultColumn })
+  useEffect(() => {
+    if (initialFocusedItemId !== null) setFocusedItemId(initialFocusedItemId)
+  }, [initialFocusedItemId])
+  // useEffect(() => {
+  //   if (focusedItemId !== null) {
+  //     console.log(rowRef.current)
+  //     rowRef.current.focus()
+  //   }
+  // }, [focusedItemId])
+  const refs = []
+
+  const setRef = (ref) => {
+    refs.push(ref)
+  }
+
+  const focusRows = (id) => {
+    const ref = refs[id]
+    console.log(ref)
+    ref.focus()
+  }
+
   return (
     // apply the table props
     <Styles>
       <div {...getTableProps()} className='table'>
-        {/* // * table HEAD BEGIN */}
         <div>
           {
             // Loop over the header rows
             headerGroups.map((headerGroup) => (
               // Apply the header row props
-              <div {...headerGroup.getHeaderGroupProps()} className='tr'>
+              <div {...headerGroup.getHeaderGroupProps()}>
                 {
                   // Loop over the headers in each row
                   headerGroup.headers.map((column, i) => {
@@ -93,17 +161,17 @@ export const ReactTable = () => {
                     // * getHeaderProps gets the headerInfo
                     // * getSortByToggleProps gets the toggle information
                     const { onClick, ...rest } = getHeaderProps(getSortByToggleProps())
-                    console.log('click', onClick, 'rest', rest)
+
                     return (
                       // * Apply the header cell props
                       <div key={`th-${i}`} {...rest} className='th'>
                         <div onClick={onClick}>{render('Header')}</div>
-                        {/* resizer div */}
+
                         <div
                           {...getResizerProps()}
                           className={`resizer ${isResizing ? 'isResizing' : ''}`}
                         />
-                        {/* Render the columns filter UI */}
+
                         <div>{canFilter ? render('Filter') : null}</div>
                         <span>{isSorted ? (isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
                       </div>
@@ -114,17 +182,36 @@ export const ReactTable = () => {
             ))
           }
         </div>
-        {/* // * table HEAD END*/}
-        {/* // * table BODY begin*/}
+
         <div {...getTableBodyProps()}>
           {
             // Loop over the table rows
-            page.map((row) => {
+            rowItems.map((row, i) => {
               // Prepare the row for display
+              //console.log('ROW', row)
               prepareRow(row)
+              const onRowClick = (e) => {
+                const { original, index } = row
+                const rowData = original
+                setFocusedItemId(rowData[selectionKey])
+                console.log({ e, index, rowData })
+                console.log(refs)
+                focusRows(index)
+                onClickThrough(e, index, rowData)
+              }
+              const { index, original } = row
+              const record = { index, ...original }
+              //console.log(focusedItemId)
+              //console.log(record[index])
+              const isFocused = record && focusedItemId === record[selectionKey] ? 'true' : null
               return (
                 // Apply the row props
-                <div {...row.getRowProps()} className='tr'>
+                <TableRow
+                  tabIndex={index}
+                  ref={(el) => setRef(el)}
+                  onClick={isRowLink ? onRowClick : () => false}
+                  {...row.getRowProps()}
+                >
                   {
                     // Loop over the rows cells
                     row.cells.map((cell) => {
@@ -139,63 +226,44 @@ export const ReactTable = () => {
                       )
                     })
                   }
-                </div>
+                </TableRow>
               )
             })
           }
         </div>
-        {/* // * table body end*/}
-        {/* // * table footer begin*/}
-        {/* 
-        Pagination can be built however you'd like. 
-        This is just a very basic UI implementation:
-      */}
-        <div className='pagination'>
-          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-            {'<<'}
-          </button>{' '}
-          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-            {'<'}
-          </button>{' '}
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            {'>'}
-          </button>{' '}
-          <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-            {'>>'}
-          </button>{' '}
-          <span>
-            Page{' '}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>{' '}
-          </span>
-          <span>
-            | Go to page:{' '}
-            <input
-              type='number'
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0
-                gotoPage(page)
-              }}
-              style={{ width: '100px' }}
-            />
-          </span>{' '}
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value))
-            }}
-          >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* // * table footer end*/}
+
+        {addPagination ? (
+          <Pagination
+            pageCount={pageCount}
+            pageIndex={pageIndex}
+            pageOptions={pageOptions}
+            pageSize={pageSize}
+            canNextPage={canNextPage}
+            canPreviousPage={canPreviousPage}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            setPageSize={setPageSize}
+            gotoPage={gotoPage}
+          />
+        ) : (
+          ''
+        )}
       </div>
     </Styles>
   )
+}
+
+ReactTable.propTypes = {
+  addPagination: PropTypes.bool,
+  addSelection: PropTypes.bool,
+  columns: PropTypes.array,
+  height: PropTypes.number,
+  indexOfPage: PropTypes.number,
+  initialFocusedItemId: PropTypes.string,
+  isRowLink: PropTypes.bool,
+  onClickThrough: PropTypes.func,
+  onRowSelect: PropTypes.func,
+  records: PropTypes.array,
+  selectionKey: PropTypes.string,
+  sizeOfPage: PropTypes.number
 }

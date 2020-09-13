@@ -14,6 +14,10 @@ export const Styles = styled.div`
           border-bottom: 0;
         }
       }
+      &:hover {
+        background-color: #e5f8ff;
+        box-shadow: inset 0 -1px 0 0 #b2bfcc, 0 -1px 0 0 #99d0e2;
+      }
     }
 
     .th,
@@ -30,11 +34,10 @@ export const Styles = styled.div`
       :last-child {
         border-right: 0;
       }
-
       .resizer {
         display: inline-block;
         background: blue;
-        width: 10px;
+        width: 5px;
         height: 100%;
         position: absolute;
         right: 0;
@@ -50,4 +53,21 @@ export const Styles = styled.div`
       }
     }
   }
+`
+export const TableRow = styled.div`
+  :last-child {
+    .td {
+      border-bottom: 0;
+    }
+  }
+
+  &:hover {
+    background-color: #e5f8ff;
+    box-shadow: inset 0 -1px 0 0 #b2bfcc, 0 -1px 0 0 #99d0e2;
+  }
+  &:focus {
+    background-color: blue;
+  }
+
+  ${({ focused }) => (focused ? 'background-color: blue;' : '')}
 `

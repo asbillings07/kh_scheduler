@@ -5,6 +5,7 @@ import { InputLabel, TextInput } from './components'
 export function Input({
   placeholder = '',
   initialValue = '',
+  defaultValue = null,
   rows = '',
   cols = '',
   label = null,
@@ -24,6 +25,7 @@ export function Input({
 
       <TextInput
         id={domID}
+        defaultValue={defaultValue}
         name={name}
         type={type}
         placeholder={placeholder}
