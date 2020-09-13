@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { MainContainer } from './elements'
-import { EmailMessaging, UserSignUp, Profile, NavBar, ErrorPage } from './layouts'
+import { EmailMessaging, UserSignUp, Profile, NavHeader, ErrorPage } from './layouts'
 import { ReactTable } from './elements/'
 function App() {
   const [isOpen, setIsOpen] = useState(false)
@@ -11,9 +11,9 @@ function App() {
   return (
     <Router>
       <MainContainer>
-        <NavBar title='KH Scheduler' navbarState={isOpen} handleNavbar={handleIsOpen} />
+        <NavHeader title='KH Scheduler' onOpen={(...args) => console.log('onOpen', ...args)} />
         <Switch>
-          <Route exact path='/' component={ReactTable} />
+          <Route exact path='/' component={UserSignUp} />
           <Route path='/profile' component={Profile} />
           <Route path='/email' component={EmailMessaging} />
           <Route component={ErrorPage} />
